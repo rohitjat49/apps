@@ -192,6 +192,7 @@ const countryList = [
 
 const FormPage = () => {
   const [cardNumber, setCardNumber] = useState('');
+  const [cvv, setCvv] = useState('');
   const [errors, setErrors] = useState({
     contact: [],
     billing: [],
@@ -205,10 +206,16 @@ const FormPage = () => {
     setCardNumber(formattedInput);
   };
 
+  const handleCvvChange = (e) => {
+    let input = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+    input = input.substring(0, 3); // Limit to 3 digits
+    setCvv(input);
+  };
+
   const validatePaymentInfo = (cardNumber, expiry, cvv) => {
     const cardRegex = /^[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/;
     const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
-    const cvvRegex = /^[0-9]{3,4}$/;
+    const cvvRegex = /^[0-9]{3}$/;
 
     const errors = [];
     if (!cardRegex.test(cardNumber)) errors.push('Card Number must be 16 digits');
@@ -240,7 +247,7 @@ const FormPage = () => {
     paymentErrors = validatePaymentInfo(
       cardNumber,
       e.target.expiry.value,
-      e.target.cvv.value
+      cvv
     );
 
     setErrors({ contact: contactErrors, billing: billingErrors, payment: paymentErrors });
@@ -395,10 +402,13 @@ const FormPage = () => {
               </div>
               <div>
                 <TextField
-                  label="CVV"
-                  variant="outlined"
-                  fullWidth
-                  name="cvv"
+                 label="CVV"
+                 variant="outlined"
+                 fullWidth
+                 value={cvv}
+                 onChange={handleCvvChange}
+                 name="cvv"
+                 required
                 />
               </div>
             </div>
